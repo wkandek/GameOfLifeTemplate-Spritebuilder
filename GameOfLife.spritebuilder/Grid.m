@@ -100,11 +100,9 @@ static const int GRID_COLUMNS = 10;
 {
     // iterate through the rows
     // note that NSArray has a method 'count' that will return the number of elements in the array
-    for (int i = 0; i < [_gridArray count]; i++)
-    {
+    for (int i = 0; i < [_gridArray count]; i++) {
         // iterate through all the columns for a given row
-        for (int j = 0; j < [_gridArray[i] count]; j++)
-        {
+        for (int j = 0; j < [_gridArray[i] count]; j++) {
             // access the creature in the cell that corresponds to the current row/column
             Creature *currentCreature = _gridArray[i][j];
             
@@ -114,20 +112,17 @@ static const int GRID_COLUMNS = 10;
             // now examine every cell around the current one
             
             // go through the row on top of the current cell, the row the cell is in, and the row past the current cell
-            for (int x = (i-1); x <= (i+1); x++)
-            {
+            for (int x = (i-1); x <= (i+1); x++) {
                 // go through the column to the left of the current cell, the column the cell is in, and the column to the right of the current cell
-                for (int y = (j-1); y <= (j+1); y++)
-                {
+                for (int y = (j-1); y <= (j+1); y++) {
                     // check that the cell we're checking isn't off the screen
                     BOOL isIndexValid;
                     isIndexValid = [self isIndexValidForX:x andY:y];
                     
                     // skip over all cells that are off screen AND the cell that contains the creature we are currently updating
-                    if (!((x == i) && (y == j)) && isIndexValid) 
-                    {
+                    if (!((x == i) && (y == j)) && isIndexValid) {
                         Creature *neighbor = _gridArray[x][y];
-                        if (neighbor.isAlive)            {
+                        if (neighbor.isAlive) {
                             currentCreature.livingNeighbors += 1;
                         }
                     }
@@ -136,6 +131,40 @@ static const int GRID_COLUMNS = 10;
         }
     }
 }
+
+- (void) countNeighbors2
+{
+    // iterate through the rows
+    // note that NSArray has a method 'count' that will return the number of elements in the array
+    for (int i = 1; i < [_gridArray count]-2; i++) {
+        // iterate through all the columns for a given row
+        for (int j = 1; j < [_gridArray[i] count]-2; j++) {
+            // access the creature in the cell that corresponds to the current row/column
+            Creature *currentCreature = _gridArray[i][j];
+            
+            // remember that every creature has a 'livingNeighbors' property that we created earlier
+            currentCreature.livingNeighbors = 0;
+            
+            // now examine every cell around the current one
+            
+            // go through the row on top of the current cell, the row the cell is in, and the row past the current cell
+            for (int x = (i-1); x <= (i+1); x++) {
+                // go through the column to the left of the current cell, the column the cell is in, and the column to the right of the current cell
+                for (int y = (j-1); y <= (j+1); y++) {
+                    
+                    // skip over the cell that contains the creature we are currently updating
+                    if (!((x == i) && (y == j))) {
+                        Creature *neighbor = _gridArray[x][y];
+                        if (neighbor.isAlive) {
+                            currentCreature.livingNeighbors += 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 - (BOOL)isIndexValidForX:(int)x andY:(int)y
 {
@@ -155,35 +184,39 @@ static const int GRID_COLUMNS = 10;
         for (int j = 0; j < [_gridArray[i] count]; j++)
         {
             Creature *currentCreature = _gridArray[i][j];
-//            if ((currentCreature.livingNeighbors == 3) ||
-//                 (currentCreature.livingNeighbors == 2))
-            if (currentCreature.livingNeighbors == 3)
-            {
+            if (currentCreature.livingNeighbors == 3) {
                 currentCreature.isAlive = TRUE;
-        
             }
-            else if (( currentCreature.livingNeighbors <= 1 ) || ( currentCreature.livingNeighbors >= 4 ))
-            {
+            else if (( currentCreature.livingNeighbors <= 1 ) || ( currentCreature.livingNeighbors >= 4 )) {
                 currentCreature.isAlive = FALSE;
             }
-            if ( currentCreature.isAlive )
-            {
+            if ( currentCreature.isAlive ) {
                 numAlive++;
             }
-
         }
     }
-//    for (int i = 0; i < [_gridArray count]; i++)
-//    {
-//        for (int j = 0; j < [_gridArray[i] count]; j++)
-//        {
-//            Creature *currentCreature = _gridArray[i][j];
-//            if ( currentCreature.isAlive )
-//            {
-//                numAlive++;
-//            }
-//        }
-//    }
+    _totalAlive = numAlive;
+}
+
+- (void) updateCreatures2
+{
+    int numAlive = 0;
+    for (int i = 1; i < [_gridArray count]-2; i++)
+    {
+        for (int j = 1; j < [_gridArray[i] count]-2; j++)
+        {
+            Creature *currentCreature = _gridArray[i][j];
+            if (currentCreature.livingNeighbors == 3) {
+                currentCreature.isAlive = TRUE;
+            }
+            else if (( currentCreature.livingNeighbors <= 1 ) || ( currentCreature.livingNeighbors >= 4 )) {
+                currentCreature.isAlive = FALSE;
+            }
+            if ( currentCreature.isAlive ) {
+                numAlive++;
+            }
+        }
+    }
     _totalAlive = numAlive;
 }
 

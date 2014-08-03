@@ -14,6 +14,8 @@
 
 - (void) evolveStep;
 - (void) countNeighbors;
+- (void) countNeighbors2;
 - (void) updateCreatures;
+- (void) updateCreatures2;
 
 @end
